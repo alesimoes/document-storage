@@ -71,8 +71,9 @@ The API supports the following endpoints:
 |DELETE|/api/document/{id}/access/user|Revoke document access to a user or a group|
 |DELETE|/api/document/{id}/access/group|Revoke document access to a user or a group|
 
+### Security
 
-To authenticate a user, send a POST request to /api/auth/login with a JSON payload that includes the username and password:
+To authenticate a user, send a POST request to /api/auth/ with a JSON payload that includes the username and password:
 
     {
       "username": "admin",
@@ -88,6 +89,14 @@ The response will include an access token that you can use to access protected e
 Include the access token in the Authorization header of subsequent requests:
 
 `Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIi...`
+All roles have a user role validation to grant access to perform the role
+
+#### Database authorization
+All functions have a user role validation to grant access to execute the function.
+
+```sql
+    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role,'manager'::tp_user_role]);
+```
 
 ### Development
 Running Tests
