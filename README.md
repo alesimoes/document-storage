@@ -83,7 +83,7 @@ To authenticate a user, send a POST request to /api/auth/ with a JSON payload th
 The response will include an access token that you can use to access protected endpoints:
 
 ```json
-  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImp0aSI6ImY4NDUzOGYyLWEyMDMtNDZk....
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c2VyMSIsImp0aSI6ImY4NDUzOGYyLWEyMDMtNDZk...."
 ```
   
 Include the access token in the Authorization header of subsequent requests:
