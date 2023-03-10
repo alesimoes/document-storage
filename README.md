@@ -96,6 +96,30 @@ Controllers role validation to grant access to execute actions
    [Authorize(Roles = "Admin,Manager,Regular")]
 ```
 
+Passwords are generated using salt.
+```c#
+        public static bool Verify(string passwordHash, string password)
+        {
+
+            byte[] hashWithSalt = Convert.FromBase64String(passwordHash);
+            byte[] salt = new byte[16];
+            Array.Copy(hashWithSalt, 32, salt, 0, 16);
+
+            using (var deriveBytes = new Rfc2898DeriveBytes(password, salt, 10000))
+            {
+                byte[] hash = deriveBytes.GetBytes(32);
+                for (int i = 0; i < 32; i++)
+                {
+                    if (hash[i] != hashWithSalt[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+```
+
 #### Database authorization
 All functions have a user role validation to grant access to execute the function.
 
