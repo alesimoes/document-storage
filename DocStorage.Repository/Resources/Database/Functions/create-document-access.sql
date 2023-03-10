@@ -56,7 +56,7 @@ BEGIN
 	INTO entity_exists;
 	
     IF FOUND THEN	     
-       RAISE EXCEPTION 'Group already has permission to access this document.';
+       RAISE EXCEPTION 'User already has permission to access this document.';
 	ELSE
         INSERT INTO "document_users" (document_access_id,document_id,user_id)
     	VALUES (gen_random_uuid(), document_access_info.document_id, document_access_info.entity_id)
