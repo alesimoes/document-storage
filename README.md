@@ -91,11 +91,16 @@ Include the access token in the Authorization header of subsequent requests:
 `Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIi...`
 All roles have a user role validation to grant access to perform the role
 
+Controllers role validation to grant access to execute actions
+```c#
+   [Authorize(Roles = "Admin,Manager,Regular")]
+```
+
 #### Database authorization
 All functions have a user role validation to grant access to execute the function.
 
 ```sql
-    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role,'manager'::tp_user_role]);
+    CALL authorize(current_user_id, ARRAY['admin'::public.user_role,'manager'::public.user_role]);
 ```
 
 ### Development

@@ -29,7 +29,7 @@ namespace DocStorage.Application.Documents.Validators
                 throw new ArgumentNullException("DocumentId");
             }
 
-            if (entity.UserId == Guid.Empty && entity.GroupId == Guid.Empty)
+            if (entity.EntityId == Guid.Empty)
             {
                 throw new ArgumentNullException("UserId or GroupId");
             }

@@ -24,6 +24,11 @@ namespace DocStorage.Api.Controllers.Groups
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(AddGroupCommand request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _mediator.SendAsync<Group>(request);
             return Ok(response);
         }
@@ -47,6 +52,11 @@ namespace DocStorage.Api.Controllers.Groups
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(UpdateGroupCommand request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _mediator.SendAsync<Group>(request);
             return Ok(response);
         }
@@ -70,6 +80,10 @@ namespace DocStorage.Api.Controllers.Groups
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddUser([FromRoute] Guid id, ManageUserGroupRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
             await _mediator.PublishAsync(new AddUserInGroupCommand
             {
@@ -86,6 +100,11 @@ namespace DocStorage.Api.Controllers.Groups
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RemoveUser([FromRoute] Guid id, ManageUserGroupRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _mediator.PublishAsync(new RemoveUserFromGroupCommand
             {
                 Id = id,

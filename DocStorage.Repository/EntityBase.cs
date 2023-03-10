@@ -1,16 +1,7 @@
-﻿using DocStorage.Repository.Exceptions;
-
-namespace DocStorage.Repository
+﻿namespace DocStorage.Repository
 {
-    public class EntityBase
+    public abstract class EntityBase
     {
-        string message;
-        public string Message { get => message; set => message = value; }
-
-        public void Validate()
-        {
-            HandleErrors.Validate(message);
-        }
-
+        public abstract string Mapping { get; }
     }
 }

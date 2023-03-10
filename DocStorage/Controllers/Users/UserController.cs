@@ -25,6 +25,11 @@ namespace DocStorage.Api.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(AddUserCommand request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _mediator.SendAsync<User>(request);
             return Ok(response);
         }
@@ -48,6 +53,11 @@ namespace DocStorage.Api.Controllers.Users
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Update(UpdateUserCommand request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _mediator.SendAsync<User>(request);
             return Ok(response);
         }

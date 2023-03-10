@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DocStorage.Repository.Documents
 {
-    [Table("tb_document")]
+    [Table("document")]
     public class Document : EntityBase, IDocument
     {
         public Document()
@@ -26,5 +26,7 @@ namespace DocStorage.Repository.Documents
         public string Category { get; set; }
         public string Filename { get; set; }
         public DateTime PostedDate { get; set; }
+
+        public override string Mapping => "document_info";
     }
 }

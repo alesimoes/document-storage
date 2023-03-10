@@ -5,6 +5,7 @@ using DocStorage.Application.Users;
 using DocStorage.Domain.Document;
 using DocStorage.Domain.Groups;
 using DocStorage.Domain.Users;
+using DocStorage.Repository;
 using DocStorage.Repository.Connection;
 using DocStorage.Repository.Contracts;
 using DocStorage.Repository.Documents;
@@ -29,6 +30,7 @@ namespace DocStorage.Api.Configuration
             services.AddScoped<IDocumentService, DocumentService>();
             services.AddScoped<IDocumentAccessService, DocumentAccessService>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<RepositoryContext>();
             services.AddScoped<IGroupRepository, GroupRepository>();
             services.AddScoped<IDocumentRepository, DocumentRepository>();
             services.AddScoped<IDocumentAccessRepository, DocumentAccessRepository>();

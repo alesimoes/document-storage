@@ -1,60 +1,59 @@
-﻿DROP FUNCTION IF EXISTS "fn_insert_document";
-DROP FUNCTION IF EXISTS "fn_get_document_by_id";
+﻿SET search_path TO app_documents;
+DROP FUNCTION IF EXISTS insert_document;
+DROP FUNCTION IF EXISTS get_document_by_id;
 
-DROP TYPE IF EXISTS "tp_document_info";
+DROP TYPE IF EXISTS "document_info";
 
-CREATE TYPE "tp_document_info" AS (
+CREATE TYPE "document_info" AS (
     id uuid,
     name text,
     description text,
     category text,
 	filename text,	
-    posted_Date timestamp with time zone,
-	message "tp_error_types"
+    posted_date timestamp with time zone	
 );
 
-CREATE OR REPLACE FUNCTION fn_insert_document(
-    document_info "tp_document_info",
+CREATE OR REPLACE FUNCTION insert_document(
+    document_info app_documents."document_info",
 	current_user_id uuid
-) RETURNS "tp_document_info"
+) RETURNS app_documents."document_info"
 AS $$
 BEGIN
-    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role,'manager'::tp_user_role]);
-    INSERT INTO "tb_document" (document_id, name, description, category, filename, posted_date)
-    VALUES  (document_info.Id,
-			document_info.Name, 
-			document_info.Description,
-			document_info.Category,
-			document_info.Filename,
+    CALL app_users.authorize(current_user_id, ARRAY['admin'::public.user_role,'manager'::public.user_role]);
+    INSERT INTO "document" (document_id, name, description, category, filename, posted_date)
+    VALUES  (document_info.id,
+			document_info.name, 
+			document_info.description,
+			document_info.category,
+			document_info.filename,
 			(SELECT CURRENT_TIMESTAMP AT TIME ZONE 'UTC')
 		   )
-	RETURNING document_id, name, description, category,filename,posted_date INTO document_info;	
-	INSERT INTO "tb_document_access" (document_access_id,document_id,user_id)
+	RETURNING document_id, name, description, category, filename, posted_date INTO document_info;	
+	INSERT INTO "document_users" (document_access_id,document_id,user_id)
     VALUES (gen_random_uuid(), document_info.id, current_user_id);
 	RETURN document_info;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fn_get_document_by_id(
-    id "uuid",
+CREATE OR REPLACE FUNCTION get_document_by_id(
+    document_info app_documents."document_info",
 	current_user_id uuid
-) RETURNS "tp_document_info"
+) RETURNS app_documents."document_info"
 AS $$
-DECLARE
-     document_info "tp_document_info";
 BEGIN
-    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role,'manager'::tp_user_role,'regular'::tp_user_role]);
-    SELECT d.document_id as Id,d.name,d.description,d.category,d.filename,d.posted_date
+    CALL app_users.authorize(current_user_id, ARRAY['admin'::public.user_role,'manager'::public.user_role,'regular'::public.user_role]);
+    SELECT DISTINCT d.document_id as id,d.name,d.description,d.category,d.filename,d.posted_date
 	INTO document_info 
-	FROM tb_document d
-	INNER JOIN tb_document_access a on d.document_id = a.document_id
-	LEFT JOIN tb_user_group g on (a.group_id = g.group_id)
+	FROM document d
+	LEFT JOIN document_users du on d.document_id = du.document_id
+	LEFT JOIN document_groups dg on d.document_id = dg.document_id	
+	LEFT JOIN user_group gg on (gg.group_id = dg.group_id)
 	WHERE
-	d.document_id = id
-	AND (a.user_id = current_user_id OR g.user_id = current_user_id);
+	d.document_id = document_info.id
+	AND (du.user_id = current_user_id OR gg.user_id = current_user_id);
 	
     IF NOT FOUND THEN       
-		document_info.message := 'document_not_found';
+		 RAISE EXCEPTION 'Document not found';
     END IF;
 	RETURN document_info;
 END;

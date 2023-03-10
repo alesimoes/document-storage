@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using DocStorage.Application.Adapters;
+using DocStorage.Application.Auth;
 using DocStorage.Application.Users.Validators;
 using DocStorage.Domain.Users;
-using BCryptNet = BCrypt.Net.BCrypt;
 
 namespace DocStorage.Application.Users
 {
@@ -20,7 +20,7 @@ namespace DocStorage.Application.Users
         public async Task<User> Add(User user)
         {
             user.Validate();
-            var hash = BCryptNet.HashPassword(user.Password);
+            var hash = Security.HashPassword(user.Password);
             user.Password = hash;
 
             var newUser = await _repository.Add(user);

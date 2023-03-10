@@ -75,7 +75,7 @@ namespace DocStorage.Tests.Api
             {
                 Id = Guid.NewGuid(),
                 DocumentId = Guid.NewGuid(),
-                GroupId = Guid.NewGuid(),
+                EntityId = Guid.NewGuid(),
             };
 
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenAdmin);
@@ -106,7 +106,7 @@ namespace DocStorage.Tests.Api
             {
                 Id = Guid.NewGuid(),
                 DocumentId = Guid.NewGuid(),
-                GroupId = Guid.NewGuid(),
+                EntityId = Guid.NewGuid(),
             };
 
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenAdmin);
@@ -167,7 +167,7 @@ namespace DocStorage.Tests.Api
             {
                 Id = Guid.NewGuid(),
                 DocumentId = Guid.NewGuid(),
-                GroupId = Guid.NewGuid(),
+                EntityId = Guid.NewGuid(),
             };
 
             _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", _tokenManager);

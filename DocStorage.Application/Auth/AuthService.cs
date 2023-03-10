@@ -3,7 +3,7 @@ using DocStorage.Application.Adapters;
 using DocStorage.Application.Auth.Validators;
 using DocStorage.Domain.Users;
 using DocStorage.Service.Interfaces;
-using BCryptNet = BCrypt.Net.BCrypt;
+
 
 
 namespace DocStorage.Application.Auth
@@ -25,7 +25,7 @@ namespace DocStorage.Application.Auth
         {
             var authenticatedUser = await _repository.AuthorizeUser(user);
 
-            if (!BCryptNet.Verify(user.Password, authenticatedUser.Password))
+            if (!Security.Verify(authenticatedUser.Password, user.Password))
             {
                 throw new AuthenticationFailedException();
             }

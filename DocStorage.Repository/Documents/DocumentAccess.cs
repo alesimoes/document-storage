@@ -12,13 +12,13 @@ namespace DocStorage.Repository.Documents
         {
             this.Id = entity.Id;
             this.DocumentId = entity.DocumentId;
-            this.GroupId = entity.GroupId;
-            this.UserId = entity.UserId;
+            this.EntityId = entity.EntityId;
         }
 
         public Guid Id { get; set; }
         public Guid DocumentId { get; set; }
-        public Guid? UserId { get; set; }
-        public Guid? GroupId { get; set; }
+        public Guid? EntityId { get; set; }
+
+        public override string Mapping => "document_access_info";
     }
 }

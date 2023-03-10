@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DocStorage.Repository.Groups
 {
-    [Table("tb_group")]
+    [Table("group")]
     public class Group : EntityBase, IGroup
     {
         public Group()
@@ -19,5 +19,6 @@ namespace DocStorage.Repository.Groups
         public Guid Id { get; set; }
         public string Name { get; set; }
 
+        public override string Mapping => "group_info";
     }
 }

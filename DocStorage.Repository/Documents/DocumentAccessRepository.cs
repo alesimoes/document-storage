@@ -1,81 +1,35 @@
-﻿using Dapper;
-using DocStorage.Domain.Document;
-using DocStorage.Repository.Contracts;
-using DocStorage.Repository.Security;
-using System.Data;
+﻿using DocStorage.Domain.Document;
 
 namespace DocStorage.Repository.Documents
 {
     public class DocumentAccessRepository : IDocumentAccessRepository
     {
-        private readonly IConnectionFactory _connection;
-        private readonly ISecurityContext _securityService;
+        private RepositoryContext _context;
 
-        public DocumentAccessRepository(IConnectionFactory connection, ISecurityContext securityService)
+        public DocumentAccessRepository(RepositoryContext context)
         {
-            _connection = connection;
-            _securityService = securityService;
+            _context = context;
+            _context.Schema = "app_documents";
         }
-
 
         public async Task AddGroupAccess(IDocumentAccess documentAccess)
         {
-            using (var connectionDb = _connection.Connection())
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("document_access_info", new DocumentAccess(documentAccess), dbType: DbType.Object);
-                parameters.Add("current_user_id", _securityService.UserId, dbType: DbType.Guid);
-                var result = await connectionDb.QueryFirstOrDefaultAsync<DocumentAccess>("fn_add_document_access_group",
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-
-                result.Validate();
-            }
+            await _context.Execute("add_document_group", new DocumentAccess(documentAccess));
         }
 
         public async Task AddUserAccess(IDocumentAccess documentAccess)
         {
-            using (var connectionDb = _connection.Connection())
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("document_access_info", new DocumentAccess(documentAccess), dbType: DbType.Object);
-                parameters.Add("current_user_id", _securityService.UserId, dbType: DbType.Guid);
-                var result = await connectionDb.QueryFirstOrDefaultAsync<DocumentAccess>("fn_add_document_access_user",
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-
-                result.Validate();
-            }
+            await _context.Execute("add_document_user", new DocumentAccess(documentAccess));
         }
 
         public async Task RemoveGroupAccess(IDocumentAccess documentAccess)
         {
-            using (var connectionDb = _connection.Connection())
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("document_access_info", new DocumentAccess(documentAccess), dbType: DbType.Object);
-                parameters.Add("current_user_id", _securityService.UserId, dbType: DbType.Guid);
-                var result = await connectionDb.QueryFirstOrDefaultAsync<DocumentAccess>("fn_remove_document_access_group",
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-
-                result.Validate();
-            }
+            await _context.Execute("remove_document_group", new DocumentAccess(documentAccess));
         }
 
         public async Task RemoveUserAccess(IDocumentAccess documentAccess)
         {
-            using (var connectionDb = _connection.Connection())
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("document_access_info", new DocumentAccess(documentAccess), dbType: DbType.Object);
-                parameters.Add("current_user_id", _securityService.UserId, dbType: DbType.Guid);
-                var result = await connectionDb.QueryFirstOrDefaultAsync<DocumentAccess>("fn_remove_document_access_user",
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-
-                result.Validate();
-            }
+            await _context.Execute("remove_document_user", new DocumentAccess(documentAccess));
         }
     }
 }

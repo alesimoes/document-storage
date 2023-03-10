@@ -26,6 +26,11 @@ namespace DocStorage.Api.Controllers.Documents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Upload([FromForm] FileMetaData fileMetaData)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             if (!Directory.Exists(folderPath))
             {
                 Directory.CreateDirectory(folderPath);
@@ -46,7 +51,7 @@ namespace DocStorage.Api.Controllers.Documents
             return Ok(newDocument);
         }
 
-        [Authorize]
+        [Authorize(Roles = "Admin,Manager,Regular")]
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -66,6 +71,11 @@ namespace DocStorage.Api.Controllers.Documents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddUser([FromRoute] Guid id, ManageAccessDocumentRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _mediator.PublishAsync(new AddUserAccessDocumentCommand
             {
                 Id = id,
@@ -81,6 +91,11 @@ namespace DocStorage.Api.Controllers.Documents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteUser([FromRoute] Guid id, ManageAccessDocumentRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _mediator.PublishAsync(new RemoveUserAccessDocumentCommand
             {
                 Id = id,
@@ -96,6 +111,11 @@ namespace DocStorage.Api.Controllers.Documents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> AddGroup([FromRoute] Guid id, ManageAccessDocumentRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _mediator.PublishAsync(new AddGroupAccessDocumentCommand
             {
                 Id = id,
@@ -111,6 +131,11 @@ namespace DocStorage.Api.Controllers.Documents
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteGroup([FromRoute] Guid id, ManageAccessDocumentRequest request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             await _mediator.PublishAsync(new RemoveGroupAccessDocumentCommand
             {
                 Id = id,

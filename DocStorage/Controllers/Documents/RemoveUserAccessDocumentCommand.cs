@@ -12,7 +12,7 @@ namespace DocStorage.Api.Controllers.Documents
             return new DocumentAccess
             {
                 DocumentId = Id,
-                UserId = UserId
+                EntityId = UserId
             };
         }
     }

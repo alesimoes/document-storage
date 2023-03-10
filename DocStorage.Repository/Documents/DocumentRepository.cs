@@ -1,52 +1,25 @@
-﻿using Dapper;
-using DocStorage.Domain.Document;
-using DocStorage.Repository.Contracts;
-using DocStorage.Repository.Security;
-using System.Data;
+﻿using DocStorage.Domain.Document;
 
 namespace DocStorage.Repository.Documents
 {
     public class DocumentRepository : IDocumentRepository
     {
-        private readonly IConnectionFactory _connection;
-        private readonly ISecurityContext _securityService;
+        private RepositoryContext _context;
 
-        public DocumentRepository(IConnectionFactory connection, ISecurityContext securityService)
+        public DocumentRepository(RepositoryContext context)
         {
-            _connection = connection;
-            _securityService = securityService;
+            _context = context;
+            _context.Schema = "app_documents";
         }
 
         public async Task<IDocument> Get(Guid id)
         {
-            using (var connectionDb = _connection.Connection())
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("id", id, DbType.Guid);
-                parameters.Add("current_user_id", _securityService.UserId, dbType: DbType.Guid);
-                var result = await connectionDb.QueryFirstOrDefaultAsync<Document>("fn_get_document_by_id",
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-
-                result.Validate();
-                return result;
-            }
+            return await _context.Execute("get_document_by_id", new Document { Id = id });
         }
 
         public async Task<IDocument> Add(IDocument entity)
         {
-            using (var connectionDb = _connection.Connection())
-            {
-                var parameters = new DynamicParameters();
-                parameters.Add("@document_info", new Document(entity), DbType.Object);
-                parameters.Add("current_user_id", _securityService.UserId, dbType: DbType.Guid);
-                var result = await connectionDb.QueryFirstOrDefaultAsync<Document>("fn_insert_document",
-                    parameters,
-                    commandType: CommandType.StoredProcedure);
-
-                result.Validate();
-                return result;
-            }
+            return await _context.Execute("insert_document", new Document(entity));
         }
     }
 }

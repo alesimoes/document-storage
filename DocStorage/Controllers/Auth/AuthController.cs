@@ -21,6 +21,11 @@ namespace DocStorage.Api.Controllers.Auth
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> Post(LoginCommand request)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             var response = await _mediator.SendAsync<AuthenticatedUser>(request);
             return Ok(response);
         }

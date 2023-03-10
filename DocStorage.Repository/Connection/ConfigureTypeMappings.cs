@@ -10,12 +10,12 @@ namespace DocStorage.Repository.Connection
     {
         public ConfigureTypeMappings()
         {
-            NpgsqlConnection.GlobalTypeMapper.MapComposite<User>("tp_user_info");
-            NpgsqlConnection.GlobalTypeMapper.MapComposite<Document>("tp_document_info");
-            NpgsqlConnection.GlobalTypeMapper.MapComposite<Group>("tp_group_info");
-            NpgsqlConnection.GlobalTypeMapper.MapComposite<UserGroup>("tp_user_group_info");
-            NpgsqlConnection.GlobalTypeMapper.MapComposite<DocumentAccess>("tp_document_access_info");
-            NpgsqlConnection.GlobalTypeMapper.MapEnum<Role>("tp_user_role");
+            NpgsqlConnection.GlobalTypeMapper.MapComposite<User>("user_info");
+            NpgsqlConnection.GlobalTypeMapper.MapComposite<Document>("document_info");
+            NpgsqlConnection.GlobalTypeMapper.MapComposite<Group>("group_info");
+            NpgsqlConnection.GlobalTypeMapper.MapComposite<UserGroup>("user_group_info");
+            NpgsqlConnection.GlobalTypeMapper.MapComposite<DocumentAccess>("document_access_info");
+            NpgsqlConnection.GlobalTypeMapper.MapEnum<Role>("public.user_role");
         }
     }
 }

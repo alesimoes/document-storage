@@ -1,105 +1,102 @@
-﻿DROP FUNCTION IF EXISTS "fn_add_document_access_group";
-DROP FUNCTION IF EXISTS "fn_add_document_access_user";
-DROP FUNCTION IF EXISTS "fn_remove_document_access_group";
-DROP FUNCTION IF EXISTS "fn_remove_document_access_user";
+﻿SET search_path TO app_documents;
+DROP FUNCTION IF EXISTS "add_document_group";
+DROP FUNCTION IF EXISTS "add_document_user";
+DROP FUNCTION IF EXISTS "remove_document_group";
+DROP FUNCTION IF EXISTS "remove_document_user";
 
-DROP TYPE IF EXISTS "tp_document_access_info";
+DROP TYPE IF EXISTS "document_access_info";
 
-CREATE TYPE "tp_document_access_info" AS (
+CREATE TYPE "document_access_info" AS (
     id uuid,
     document_id uuid, 
-	group_id uuid,
-    user_id uuid,
-	message tp_error_types
+	entity_id uuid 	
 );
 
-CREATE OR REPLACE FUNCTION fn_add_document_access_group(
-   document_access_info "tp_document_access_info",
+CREATE OR REPLACE FUNCTION add_document_group(
+   document_access_info app_documents."document_access_info",
    current_user_id uuid
-) RETURNS tp_document_access_info
+) RETURNS document_access_info
 AS $$
 DECLARE
-    entity_exists "tp_document_access_info";
+    entity_exists app_documents."document_access_info";
 BEGIN
-    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role]);
-    CALL pe_document_exists(document_access_info.document_id);
-    CALL pe_group_exists(document_access_info.group_id);
-    SELECT document_access_id,document_id,group_id,user_id FROM "tb_document_access" 
-	WHERE "tb_document_access".group_Id = document_access_info.group_id 
-	and tb_document_access.document_id = document_access_info.document_id
+    CALL app_users.authorize(current_user_id, ARRAY['admin'::public.user_role]);
+    CALL app_documents.document_exists(document_access_info.document_id);
+    CALL app_users.group_exists(document_access_info.entity_id);
+    SELECT document_access_id,document_id,group_id FROM "document_groups" 
+	WHERE "document_groups".group_Id = document_access_info.entity_id 
+	and document_groups.document_id = document_access_info.document_id
 	INTO entity_exists;
 	
     IF FOUND THEN	     
-        entity_exists.message := 'group_already_exists_in_document_access';	
-		document_access_info := entity_exists;
+        RAISE EXCEPTION 'Group already has permission to access this document.';
 	ELSE
-        INSERT INTO "tb_document_access" (document_access_id,document_id,group_id)
-    	VALUES (gen_random_uuid(), document_access_info.document_id, document_access_info.group_id)
-		RETURNING document_access_id,document_id,group_id,user_id into document_access_info;	
+        INSERT INTO "document_groups" (document_access_id,document_id,group_id)
+    	VALUES (gen_random_uuid(), document_access_info.document_id, document_access_info.entity_id)
+		RETURNING document_access_id,document_id,group_id into document_access_info;	
     END IF;
 	RETURN document_access_info;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fn_add_document_access_user(
-   document_access_info "tp_document_access_info",
+CREATE OR REPLACE FUNCTION add_document_user(
+   document_access_info app_documents."document_access_info",
    current_user_id uuid
-) RETURNS tp_document_access_info
+) RETURNS app_documents.document_access_info
 AS $$
 DECLARE
-    entity_exists "tp_document_access_info";
+    entity_exists app_documents."document_access_info";
 BEGIN	
-    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role]);
-    CALL pe_document_exists(document_access_info.document_id);
-    CALL pe_user_exists(document_access_info.user_id);
-    SELECT document_access_id,document_id,group_id,user_id FROM "tb_document_access" 
-	WHERE "tb_document_access".user_Id = document_access_info.user_id 
-    and tb_document_access.document_id = document_access_info.document_id
+    CALL app_users.authorize(current_user_id, ARRAY['admin'::public.user_role]);
+    CALL app_documents.document_exists(document_access_info.document_id);
+    CALL app_users.user_exists(document_access_info.entity_id);
+    SELECT document_access_id,document_id,user_id FROM "document_users" 
+	WHERE "document_users".user_Id = document_access_info.entity_id 
+    and "document_users".document_id = document_access_info.document_id
 	INTO entity_exists;
 	
     IF FOUND THEN	     
-        entity_exists.message := 'user_already_exists_in_document_access';	
-		document_access_info := entity_exists;
+       RAISE EXCEPTION 'Group already has permission to access this document.';
 	ELSE
-        INSERT INTO "tb_document_access" (document_access_id,document_id,user_id)
-    	VALUES (gen_random_uuid(), document_access_info.document_id, document_access_info.user_id)
-		RETURNING document_access_id,document_id,group_id,user_id into document_access_info;	
+        INSERT INTO "document_users" (document_access_id,document_id,user_id)
+    	VALUES (gen_random_uuid(), document_access_info.document_id, document_access_info.entity_id)
+		RETURNING document_access_id,document_id,user_id into document_access_info;	
     END IF;
 	RETURN document_access_info;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fn_remove_document_access_group(
-    document_access_info "tp_document_access_info",
-	 current_user_id uuid
-) RETURNS tp_document_access_info
+CREATE OR REPLACE FUNCTION remove_document_group(
+    document_access_info app_documents."document_access_info",
+	current_user_id uuid
+) RETURNS app_documents.document_access_info
 AS $$
 BEGIN
-    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role]);
-    DELETE FROM "tb_document_access"
-	WHERE tb_document_access.group_id = document_access_info.group_id 
-	and tb_document_access.document_id = document_access_info.document_id;  
+    CALL app_users.authorize(current_user_id, ARRAY['admin'::public.user_role]);
+    DELETE FROM "document_groups"
+	WHERE group_id = document_access_info.entity_id 
+	and document_id = document_access_info.document_id;  
     
     IF NOT FOUND THEN
-        document_access_info.message := 'group_not_found_in_document_access';	
+         RAISE EXCEPTION 'Selected group doesn t have permission for this document.';
 	END IF;  
 	RETURN document_access_info;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION fn_remove_document_access_user(
-    document_access_info "tp_document_access_info",
-	 current_user_id uuid
-) RETURNS tp_document_access_info
+CREATE OR REPLACE FUNCTION remove_document_user(
+    document_access_info app_documents."document_access_info",
+	current_user_id uuid
+) RETURNS app_documents.document_access_info
 AS $$
 BEGIN
-    CALL pe_authorize(current_user_id, ARRAY['admin'::tp_user_role]);
-    DELETE FROM "tb_document_access"
-	WHERE tb_document_access.user_id = document_access_info.user_id 
-	and tb_document_access.document_id = document_access_info.document_id;  
+    CALL app_users.authorize(current_user_id, ARRAY['admin'::public.user_role]);
+    DELETE FROM "document_users"
+	WHERE user_id = document_access_info.entity_id 
+	and document_id = document_access_info.document_id;  
     
     IF NOT FOUND THEN
-        document_access_info.message := 'user_not_found_in_document_access';	
+        RAISE EXCEPTION 'Selected user doesn t have permission for this document.';
 	END IF;  
 	RETURN document_access_info;
 END;

@@ -61,14 +61,14 @@ namespace DocStorage.Repository.Connection {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;fn_add_document_access_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_add_document_access_user&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_remove_document_access_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_remove_document_access_user&quot;;
+        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;add_document_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;add_document_user&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;remove_document_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;remove_document_user&quot;;
         ///
-        ///DROP TYPE IF EXISTS &quot;tp_document_access_info&quot;;
+        ///DROP TYPE IF EXISTS &quot;document_access_info&quot;;
         ///
-        ///CREATE TYPE &quot;tp_document_access_info&quot; AS (
+        ///CREATE TYPE &quot;document_access_info&quot; AS (
         ///    id uuid,
         ///    document_id uuid, 
         ///	group_id uuid,
@@ -76,7 +76,7 @@ namespace DocStorage.Repository.Connection {
         ///	message tp_error_types
         ///);
         ///
-        ///CREATE OR REPLACE FUNCTION fn_add_document_access_group(
+        ///CREATE OR REPLACE FUNCTION add_document_group(
         ///   document_access_in [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string create_document_access {
@@ -86,12 +86,12 @@ namespace DocStorage.Repository.Connection {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;fn_insert_document&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_get_document_by_id&quot;;
+        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;insert_document&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;get_document_by_id&quot;;
         ///
-        ///DROP TYPE IF EXISTS &quot;tp_document_info&quot;;
+        ///DROP TYPE IF EXISTS &quot;document_info&quot;;
         ///
-        ///CREATE TYPE &quot;tp_document_info&quot; AS (
+        ///CREATE TYPE &quot;document_info&quot; AS (
         ///    id uuid,
         ///    name text,
         ///    description text,
@@ -101,13 +101,13 @@ namespace DocStorage.Repository.Connection {
         ///	message &quot;tp_error_types&quot;
         ///);
         ///
-        ///CREATE OR REPLACE FUNCTION fn_insert_document(
-        ///    document_info &quot;tp_document_info&quot;,
+        ///CREATE OR REPLACE FUNCTION insert_document(
+        ///    document_info &quot;document_info&quot;,
         ///	current_user_id uuid
-        ///) RETURNS &quot;tp_document_info&quot;
+        ///) RETURNS &quot;document_info&quot;
         ///AS $$
         ///BEGIN
-        ///    CALL pe_authorize(current_use [rest of string was truncated]&quot;;.
+        ///    CALL authorize(current_use [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string create_documents {
             get {
@@ -116,23 +116,23 @@ namespace DocStorage.Repository.Connection {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;fn_insert_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_get_group_by_id&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_delete_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_update_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_add_user_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_delete_user_group&quot;;
+        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;insert_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;get_group_by_id&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;delete_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;update_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;add_user_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;delete_user_group&quot;;
         ///
-        ///DROP TYPE IF EXISTS &quot;tp_group_info&quot;;
-        ///DROP TYPE IF EXISTS &quot;tp_user_group_info&quot;;
+        ///DROP TYPE IF EXISTS &quot;group_info&quot;;
+        ///DROP TYPE IF EXISTS &quot;user_group_info&quot;;
         ///
-        ///CREATE TYPE &quot;tp_group_info&quot; AS (
+        ///CREATE TYPE &quot;group_info&quot; AS (
         ///   Id uuid,
         ///   Name text,
         ///   message tp_error_types
         ///);
         ///
-        ///CREATE TYPE &quot;tp_user_group_info&quot; AS (
+        ///CREATE TYPE &quot;user_group_info&quot; AS (
         ///   Id uuid,
         ///   user_id uuid,
         ///   grou [rest of string was truncated]&quot;;.
@@ -144,26 +144,26 @@ namespace DocStorage.Repository.Connection {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;fn_insert_user&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_authorize_user&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_get_user_by_id&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_delete_user&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_update_user&quot;;
+        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;insert_user&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;authorize_user&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;get_user_by_id&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;delete_user&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;update_user&quot;;
         ///
-        ///DROP TYPE IF EXISTS &quot;tp_user_info&quot;;
+        ///DROP TYPE IF EXISTS &quot;user_info&quot;;
         ///
-        ///CREATE TYPE &quot;tp_user_info&quot; AS (
+        ///CREATE TYPE &quot;user_info&quot; AS (
         ///   id uuid,
         ///   username text,
         ///   password text,
-        ///   role tp_user_role,
+        ///   role public.user_role,
         ///   message &quot;tp_error_types&quot;
         ///);
         ///
-        ///CREATE OR REPLACE FUNCTION fn_insert_user(
-        ///    user_info &quot;tp_user_info&quot;,
+        ///CREATE OR REPLACE FUNCTION insert_user(
+        ///    user_info &quot;user_info&quot;,
         ///	current_user_id uuid
-        ///) RETURNS tp_user_info
+        ///) RETURNS user_info
         ///AS $$
         /// [rest of string was truncated]&quot;;.
         /// </summary>
@@ -174,19 +174,19 @@ namespace DocStorage.Repository.Connection {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;fn_insert_user&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_authorize_user&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_get_user_by_id&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_delete_user&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_update_user&quot;;
+        ///   Looks up a localized string similar to DROP FUNCTION IF EXISTS &quot;insert_user&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;authorize_user&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;get_user_by_id&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;delete_user&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;update_user&quot;;
         ///
-        ///DROP FUNCTION IF EXISTS &quot;fn_insert_document&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_get_document_by_id&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;insert_document&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;get_document_by_id&quot;;
         ///
-        ///DROP FUNCTION IF EXISTS &quot;fn_insert_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_get_group_by_id&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_delete_group&quot;;
-        ///DROP FUNCTION IF EXISTS &quot;fn_update_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;insert_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;get_group_by_id&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;delete_group&quot;;
+        ///DROP FUNCTION IF EXISTS &quot;update_group&quot;;
         ///DROP FUNCTION IF EXISTS  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string createstructure {

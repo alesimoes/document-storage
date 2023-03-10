@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DocStorage.Repository.Users
 {
-    [Table("tb_user")]
+    [Table("user")]
     public class User : EntityBase, IUser
     {
         public User()
@@ -22,6 +22,11 @@ namespace DocStorage.Repository.Users
         public Guid Id { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+
+
         public Role Role { get; set; }
+
+        public override string Mapping => "user_info";
+
     }
 }
